@@ -52,7 +52,10 @@ def generate_string_location_map(all_availible_words):
     # create object so filling it is simple
     letter_spot_value_map = dict()
     for letter in 'abcdefghijklmnopqrstuvwxyz':
-        letter_spot_value_map[letter] = {0:set(), 1:set(), 2:set(), 3:set(), 4:set()}
+        index_to_set = dict()
+        for index in range(0, len(next(iter(all_availible_words)))):
+            index_to_set[index]=set()
+        letter_spot_value_map[letter] = index_to_set
 
     for word in all_availible_words:
         word = word.strip()
