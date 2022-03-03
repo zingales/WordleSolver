@@ -23,3 +23,18 @@ anagram raise and arise
 #yybbb
 #bribe
 #bggbg
+
+'''
+Test 3: word is banjo
+black due to second letter being black
+'''
+# reply
+# bbbbb
+# might
+# bbbbb
+# found
+# bybyb
+# known
+# byybb
+# canon
+# bggyb
