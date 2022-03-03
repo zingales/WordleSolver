@@ -76,7 +76,7 @@ class AvailibleWords(object):
 
 
     def __init__(self, all_words):
-        self.all_words_value_to_word_map, self.anagrams = generate_numbers_to_words_map(all_words)
+        self.all_words_value_to_word_map, self.availible_anagrams = generate_numbers_to_words_map(all_words)
         self.letter_spot_value_map = generate_string_location_map(all_words)
 
         self.availible_word_values = set(self.all_words_value_to_word_map.keys())
@@ -85,13 +85,19 @@ class AvailibleWords(object):
         words = set()
         for value in self.availible_word_values:
             words.add(self.all_words_value_to_word_map[value])
-            if value in self.anagrams:
-                words.update(self.anagrams[value])
+            if value in self.availible_anagrams:
+                words.update(self.availible_anagrams[value])
 
         return words
 
     def __len__(self):
-        return len(self.availible_word_values)
+        count = len(self.availible_word_values)
+
+        for value, anagrams in self.availible_anagrams.items():
+            #the subraction is for not double counting since
+            # 1 word in the list was already including in the availible words len
+            count += len(anagrams)-1
+        return count
 
     def filter_guess(self, guess, response):
 
@@ -112,11 +118,13 @@ class AvailibleWords(object):
         for word_value in set(self.availible_word_values):
             if word_value % correct_value != 0:
                 self.availible_word_values.remove(word_value)
+                self.availible_anagrams.pop(word_value, None)
             for incorrect_value in incorrect_values:
                 if word_value not in self.availible_word_values:
                     break
                 if word_value % incorrect_value == 0:
                     self.availible_word_values.remove(word_value)
+                    self.availible_anagrams.pop(word_value, None)
 
         greens, yellows = get_green_and_yellow_tuples(guess, response)
 
@@ -125,5 +133,24 @@ class AvailibleWords(object):
 
         for letter,index in yellows:
             values_with_anagrams = set(self.letter_spot_value_map[letter][index])
-            values = values_with_anagrams.difference(self.anagrams.keys())
+            # don't remove any values with anagrams (for now)
+            values = values_with_anagrams.difference(self.availible_anagrams.keys())
             self.availible_word_values = self.availible_word_values.difference(values)
+
+        #deal with the anagrams
+        if correct_value in self.availible_anagrams:
+            if len(greens) > 0:
+                anagrams = self.availible_anagrams[correct_value]
+                for word in list(anagrams):
+                    for letter, index in greens:
+                        if word[index] != letter:
+                            anagrams.remove(word)
+                            break
+
+            if len(yellows) > 0:
+                anagrams = self.availible_anagrams[correct_value]
+                for word in list(anagrams):
+                    for letter, index in yellows:
+                        if word[index] == letter:
+                            anagrams.remove(word)
+                            break
