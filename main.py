@@ -1,4 +1,5 @@
 from AvailibleWords import AvailibleWords
+from WordleGameEngine import WorldeGameEngine
 
 
 def get_all_words():
@@ -40,6 +41,15 @@ def let_us_play(all_words):
 
 if __name__ == '__main__':
     all_words = get_all_words()
-    print("Menu instead of guessing a word type these letters\nclick enter for next guess\n\ts to show what words are availilbe\n\tq to quit\n\tr to restart with a new word\n")
-    while (let_us_play(all_words) == 'r'):
-        pass
+    # print("Menu instead of guessing a word type these letters\nclick enter for next guess\n\ts to show what words are availilbe\n\tq to quit\n\tr to restart with a new word\n")
+    # while (let_us_play(all_words) == 'r'):
+        # pass
+
+    gameEngine = WorldeGameEngine(all_words)
+    gameEngine.set_word_to_guess()
+    response = ''
+    while(response != 'ggggg'):
+        response = gameEngine.guess(input("what would would you like to guess\n"))
+        print(response)
+
+    print(gameEngine.guesses_so_far)
