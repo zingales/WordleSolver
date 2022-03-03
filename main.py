@@ -4,13 +4,13 @@ from AvailibleWords import AvailibleWords
 def get_all_words():
     all_words_file = open("dictionary.txt", "rt")
     all_words = all_words_file.readlines()
-    return all_words
+    return [word.strip().lower() for word in all_words]
 
 def let_us_play(all_words):
     availible_words = AvailibleWords(all_words)
     print("now let's start")
     while len(availible_words) > 1:
-        guess = input("what word was guessed\n").lower()
+        guess = input("what word was guessed\n").strip().lower()
         if len(guess) < 5:
             if guess == 's':
                 for words in availible_words.words():
@@ -20,7 +20,7 @@ def let_us_play(all_words):
                 return 'q'
             if guess == 'r':
                 return 'r'
-        response = input("what did the system respond. b for blank, y for yellow, g for green\n").lower()
+        response = input("what did the system respond. b for blank, y for yellow, g for green\n").lower().strip()
 
         availible_words.filter_guess(guess, response)
 

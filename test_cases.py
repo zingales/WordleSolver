@@ -38,3 +38,18 @@ black due to second letter being black
 # byybb
 # canon
 # bggyb
+
+'''
+Test 4: word is three
+making sure you remove the correct anagrams
+'''
+# found
+# bbbbb
+# might
+# bbbyy
+# reply
+# yybbb
+# heart
+# yybyy
+# ether
+# yyygy

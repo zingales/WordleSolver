@@ -7,7 +7,7 @@ def convert_letter_to_prime(letter):
 
 def convert_word_to_value(word):
     value = 1
-    for letter in word.strip():
+    for letter in word:
         value*=convert_letter_to_prime(letter)
     return value
 
@@ -15,8 +15,7 @@ def generate_numbers_to_words_map(words):
     numbers_to_words_map = dict()
 
     anagrams = dict()
-    for raw_word in words:
-        word = raw_word.strip()
+    for word in words:
         value = convert_word_to_value(word)
         if value in numbers_to_words_map:
             anagram_words = anagrams.get(value, set())
@@ -31,9 +30,9 @@ def generate_numbers_to_words_map(words):
 def word_guess_to_value(word, hints):
     correct_guesses = ''
     for i in range(0,len(hints)):
-        if hints[i].lower() == 'y':
+        if hints[i] == 'y':
             correct_guesses+=word[i]
-        if hints[i].lower() == 'g':
+        if hints[i] == 'g':
             correct_guesses+=word[i]
     return convert_word_to_value(correct_guesses)
 
@@ -42,7 +41,7 @@ def word_guess_to_non_values(word, hints):
     incorrect_guesses = ''
     incorrect_values = set()
     for i in range(0,len(hints)):
-        if hints[i].lower() == 'b':
+        if hints[i] == 'b':
             incorrect_guesses+=word[i]
             incorrect_values.add(convert_letter_to_prime(word[i]))
 
@@ -58,7 +57,6 @@ def generate_string_location_map(all_availible_words):
         letter_spot_value_map[letter] = index_to_set
 
     for word in all_availible_words:
-        word = word.strip()
         value = convert_word_to_value(word)
         for index, letter in enumerate(word):
             letter_spot_value_map[letter][index].add(value)
@@ -69,9 +67,9 @@ def get_green_and_yellow_tuples(word, hints):
     yellows = list()
     greens = list()
     for i in range(0,len(hints)):
-        if hints[i].lower() == 'y':
+        if hints[i] == 'y':
             yellows.append((word[i], i))
-        if hints[i].lower() == 'g':
+        if hints[i] == 'g':
             greens.append((word[i], i))
     return greens, yellows
 
@@ -87,9 +85,10 @@ class AvailibleWords(object):
     def words(self):
         words = set()
         for value in self.availible_word_values:
-            words.add(self.all_words_value_to_word_map[value])
             if value in self.availible_anagrams:
                 words.update(self.availible_anagrams[value])
+            else:
+                words.add(self.all_words_value_to_word_map[value])
 
         return words
 
@@ -98,7 +97,8 @@ class AvailibleWords(object):
 
         for value, anagrams in self.availible_anagrams.items():
             #the subraction is for not double counting since
-            # 1 word in the list was already including in the availible words len
+            # 1 word in the list was already including in the
+            # availible words values length
             count += len(anagrams)-1
         return count
 
