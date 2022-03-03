@@ -39,17 +39,45 @@ def let_us_play(all_words):
     return 'r'
 
 
-if __name__ == '__main__':
-    all_words = get_all_words()
-    # print("Menu instead of guessing a word type these letters\nclick enter for next guess\n\ts to show what words are availilbe\n\tq to quit\n\tr to restart with a new word\n")
-    # while (let_us_play(all_words) == 'r'):
-        # pass
-
+def human_against_gameEngine(all_words):
     gameEngine = WorldeGameEngine(all_words)
     gameEngine.set_word_to_guess()
     response = ''
     while(response != 'ggggg'):
-        response = gameEngine.guess(input("what would would you like to guess\n"))
-        print(response)
+        guess = input("what would would you like to guess\n")
+        response = gameEngine.guess(guess)
+        print("response was", response)
+
+
+def assistant_mode(all_words):
+    availible_words = AvailibleWords(all_words)
+    print("Menu instead of guessing a word type these letters\nclick enter for next guess\n\ts to show what words are availilbe\n\tq to quit\n\tr to restart with a new word\n")
+    while (let_us_play(all_words) == 'r'):
+        pass
+
+
+def self_playing_machine(all_words):
+    availible_words = AvailibleWords(all_words)
+    gameEngine = WorldeGameEngine(all_words)
+    gameEngine.set_word_to_guess()
+    response = ''
+    round = 0
+    while(response != 'ggggg'):
+        if round == 20:
+            input("We just reached 20 guesses do you want to continue?")
+        print("Words left in the pool", len(availible_words))
+        guess = availible_words.get_next_guess()
+        print("guess was", guess)
+        response = gameEngine.guess(guess)
+        print("response was", response)
+        availible_words.filter_guess(guess, response)
+        round+=1
 
     print(gameEngine.guesses_so_far)
+
+if __name__ == '__main__':
+    all_words = get_all_words()
+
+    # human_against_gameEngine(all_words)
+    # assistant_mode(all_words)
+    self_playing_machine(all_words)

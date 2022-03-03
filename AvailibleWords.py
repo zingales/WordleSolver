@@ -1,3 +1,4 @@
+import random
 
 first_26_primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101]
 
@@ -91,6 +92,14 @@ class AvailibleWords(object):
                 words.add(self.all_words_value_to_word_map[value])
 
         return words
+
+    def get_next_guess(self):
+        if len(self) == 0:
+            # throw error
+            pass
+
+        return random.choice(list(self.words()))
+
 
     def __len__(self):
         count = len(self.availible_word_values)

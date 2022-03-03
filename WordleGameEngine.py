@@ -29,7 +29,7 @@ class WorldeGameEngine(object):
         response_list = len(word)* ['b']
         remaining_letters = list(self.secret_word)
         for index, letter in enumerate(word):
-            if letter in self.secret_word:
+            if letter in remaining_letters:
                 response_list[index] = 'y'
                 remaining_letters.remove(letter)
         for index, letter in enumerate(word):
