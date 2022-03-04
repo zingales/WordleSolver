@@ -1,6 +1,7 @@
 from AvailibleWords import AvailibleWords
 from WordleGameEngine import WorldeGameEngine
 
+import statistics
 
 def get_all_words():
     all_words_file = open("dictionary.txt", "rt")
@@ -24,7 +25,7 @@ def let_us_play(all_words):
         response = input("what did the system respond. b for blank, y for yellow, g for green\n").lower().strip()
 
         availible_words.filter_guess(guess, response)
-
+        availible_words.words()
         no_words_left = len(availible_words)
         print("availible words left", no_words_left)
         if no_words_left < 11:
@@ -41,7 +42,11 @@ def let_us_play(all_words):
 
 def human_against_gameEngine(all_words):
     gameEngine = WorldeGameEngine(all_words)
-    gameEngine.set_word_to_guess()
+    word=input("would you like to set the word\n").strip()
+    if word not in all_words:
+        print("invalid word setting a random one")
+        word=None
+    gameEngine.set_word_to_guess(word)
     response = ''
     while(response != 'ggggg'):
         guess = input("what would would you like to guess\n")
@@ -63,21 +68,30 @@ def self_playing_machine(all_words):
     response = ''
     round = 0
     while(response != 'ggggg'):
-        if round == 20:
-            input("We just reached 20 guesses do you want to continue?")
+        if round % 20 == 0 and round != 0:
+            input("We just reached %s guesses do you want to continue?" % (round))
         print("Words left in the pool", len(availible_words))
+        if len(availible_words) == 0:
+            print(gameEngine.guesses_so_far, gameEngine.secret_word)
         guess = availible_words.get_next_guess()
-        print("guess was", guess)
+        # print("guess was", guess)
         response = gameEngine.guess(guess)
-        print("response was", response)
+        # print("response was", response)
         availible_words.filter_guess(guess, response)
         round+=1
 
-    print(gameEngine.guesses_so_far)
+    return gameEngine.guesses_so_far
 
 if __name__ == '__main__':
     all_words = get_all_words()
 
     # human_against_gameEngine(all_words)
-    # assistant_mode(all_words)
-    self_playing_machine(all_words)
+    assistant_mode(all_words)
+    # guesses_distribution = set()
+    # total_games = 200
+    # for count in range(total_games):
+    #     guesses = self_playing_machine(all_words)
+    #     # print(guesses)
+    #     guesses_distribution.add(len(guesses))
+    #
+    # print(statistics.mean(guesses_distribution))

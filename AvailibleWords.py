@@ -83,6 +83,9 @@ class AvailibleWords(object):
 
         self.availible_word_values = set(self.all_words_value_to_word_map.keys())
 
+        # self.debug_the_word = 'doing'
+        # print('value of %s is %i' % (self.debug_the_word, convert_word_to_value(self.debug_the_word)) )
+
     def words(self):
         words = set()
         for value in self.availible_word_values:
@@ -98,7 +101,12 @@ class AvailibleWords(object):
             # throw error
             pass
 
-        return random.choice(list(self.words()))
+        words = list(self.words())
+        len_words = len(words)
+        print("words left to guess", len_words)
+        if len_words < 5:
+            print(words)
+        return random.choice(words)
 
 
     def __len__(self):
@@ -127,6 +135,7 @@ class AvailibleWords(object):
                     value*=incorrect_value
                 incorrect_values.add(value)
 
+        # print("Do we still %s pre letter calculation? %s" % (self.debug_the_word, convert_word_to_value(self.debug_the_word) in self.availible_word_values))
         for word_value in set(self.availible_word_values):
             if word_value % correct_value != 0:
                 self.availible_word_values.remove(word_value)
@@ -140,29 +149,44 @@ class AvailibleWords(object):
 
         greens, yellows = get_green_and_yellow_tuples(guess, response)
 
+        # print("Do we still have %s post letter calc? %s" % ( self.debug_the_word, convert_word_to_value(self.debug_the_word) in self.availible_word_values))
+
+        # dealing with greens (not in anagrams)
         for letter, index in greens:
             self.availible_word_values = self.availible_word_values.intersection(self.letter_spot_value_map[letter][index])
+        # print("Do we still have %s post green letter removal? %s" % ( self.debug_the_word, convert_word_to_value(self.debug_the_word) in self.availible_word_values))
 
+        #dealing with yellows (not in anagrams)
         for letter,index in yellows:
             values_with_anagrams = set(self.letter_spot_value_map[letter][index])
             # don't remove any values with anagrams (for now)
             values = values_with_anagrams.difference(self.availible_anagrams.keys())
             self.availible_word_values = self.availible_word_values.difference(values)
+        # print("Do we still have %s post yellow letter removal? %s" % ( self.debug_the_word, convert_word_to_value(self.debug_the_word) in self.availible_word_values))
 
-        #deal with the anagrams
-        if correct_value in self.availible_anagrams:
-            if len(greens) > 0:
-                anagrams = self.availible_anagrams[correct_value]
-                for word in list(anagrams):
-                    for letter, index in greens:
-                        if word[index] != letter:
-                            anagrams.remove(word)
-                            break
+        # remove anagrams that we no longer need
+        for anagram in set(self.availible_anagrams.keys()):
+            if anagram not in self.availible_word_values:
+                self.availible_anagrams.pop(anagram)
 
-            if len(yellows) > 0:
-                anagrams = self.availible_anagrams[correct_value]
-                for word in list(anagrams):
-                    for letter, index in yellows:
-                        if word[index] == letter:
-                            anagrams.remove(word)
-                            break
+        # deal with the anagrams
+        for word_value in self.availible_word_values:
+            if word_value in self.availible_anagrams:
+                anagram_value = word_value
+                if len(greens) > 0:
+                    anagrams = self.availible_anagrams[anagram_value]
+                    for word in list(anagrams):
+                        for letter, index in greens:
+                            if word[index] != letter:
+                                anagrams.remove(word)
+                                break
+
+                if len(yellows) > 0:
+                    anagrams = self.availible_anagrams[anagram_value]
+                    for word in list(anagrams):
+                        for letter, index in yellows:
+                            if word[index] == letter:
+                                anagrams.remove(word)
+                                break
+
+        # print("Do we still have %s post anagram calc? %s" % (self.debug_the_word, convert_word_to_value(self.debug_the_word) in self.availible_word_values))

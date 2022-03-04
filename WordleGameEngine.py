@@ -12,7 +12,7 @@ class WorldeGameEngine(object):
         if word is None:
             self.secret_word = random.choice(list(self.all_words))
         else:
-            if word not in self.words:
+            if word not in self.all_words:
                 pass
             self.secret_word = word
 
@@ -29,12 +29,14 @@ class WorldeGameEngine(object):
         response_list = len(word)* ['b']
         remaining_letters = list(self.secret_word)
         for index, letter in enumerate(word):
+            if letter == self.secret_word[index]:
+                response_list[index] = 'g'
+                remaining_letters.remove(letter)
+        for index, letter in enumerate(word):
             if letter in remaining_letters:
                 response_list[index] = 'y'
                 remaining_letters.remove(letter)
-        for index, letter in enumerate(word):
-            if letter == self.secret_word[index]:
-                response_list[index] = 'g'
+
 
         response_string = "".join(response_list)
         self.guesses_so_far.append((word, response_string))

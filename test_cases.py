@@ -53,3 +53,10 @@ making sure you remove the correct anagrams
 # yybyy
 # ether
 # yyygy
+
+'''
+Test 5: word is doing
+you guess going
+'''
+#going
+#bgggg
